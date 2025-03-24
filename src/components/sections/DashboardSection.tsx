@@ -1,0 +1,136 @@
+
+import { Link } from 'react-router-dom';
+import { BookOpen, BookMarked, AlertTriangle, BarChart3 } from 'lucide-react';
+import ProgressBar from '@/components/ui/ProgressBar';
+import { cn } from '@/lib/utils';
+import { getDailyGoal, getEstimatedVocabulary } from '@/constants/mockData';
+
+interface StatCardProps {
+  title: string;
+  value: string | number;
+  icon: React.ElementType;
+  description?: string;
+  className?: string;
+}
+
+const StatCard = ({ title, value, icon: Icon, description, className }: StatCardProps) => (
+  <div className={cn("glass-card p-6 rounded-xl", className)}>
+    <div className="flex items-start justify-between">
+      <div>
+        <p className="text-sm font-medium text-muted-foreground">{title}</p>
+        <p className="text-3xl font-bold mt-1">{value}</p>
+        {description && (
+          <p className="text-sm text-muted-foreground mt-1">{description}</p>
+        )}
+      </div>
+      <div className="p-2 bg-primary/10 rounded-full">
+        <Icon className="h-6 w-6 text-primary" />
+      </div>
+    </div>
+  </div>
+);
+
+const ActionCard = ({ title, icon: Icon, path, className }: { 
+  title: string;
+  icon: React.ElementType;
+  path: string;
+  className?: string;
+}) => (
+  <Link 
+    to={path} 
+    className={cn(
+      "glass-card p-6 rounded-xl transition-medium hover-scale", 
+      className
+    )}
+  >
+    <div className="flex items-center justify-between">
+      <p className="font-medium">{title}</p>
+      <Icon className="h-5 w-5 text-primary" />
+    </div>
+  </Link>
+);
+
+const DashboardSection = () => {
+  const dailyGoal = getDailyGoal();
+  const vocabularySize = getEstimatedVocabulary();
+  const studiedToday = 12; // This would come from actual tracking
+  
+  return (
+    <div className="max-w-5xl mx-auto">
+      <div className="glass-card p-8 rounded-xl mb-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6">
+          <div>
+            <h2 className="text-2xl font-bold mb-1">你好! 👋</h2>
+            <p className="text-muted-foreground">今天继续学习新单词吧</p>
+          </div>
+          <Link
+            to="/"
+            className="mt-4 sm:mt-0 px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors"
+          >
+            开始学习
+          </Link>
+        </div>
+        
+        <div className="space-y-4">
+          <div className="flex justify-between items-end mb-1">
+            <p className="text-sm font-medium">今日学习目标</p>
+            <p className="text-sm text-muted-foreground">{studiedToday}/{dailyGoal} 单词</p>
+          </div>
+          <ProgressBar 
+            value={studiedToday} 
+            max={dailyGoal} 
+            size="lg" 
+            color={studiedToday >= dailyGoal ? "success" : "default"} 
+          />
+        </div>
+      </div>
+      
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+        <StatCard 
+          title="词汇量" 
+          value={vocabularySize} 
+          icon={BookOpen}
+          description="估计词汇量"
+        />
+        <StatCard 
+          title="已收藏" 
+          value={15} 
+          icon={BookMarked}
+          description="收藏单词数"
+        />
+        <StatCard 
+          title="待复习" 
+          value={8} 
+          icon={AlertTriangle}
+          description="错题数量"
+        />
+        <StatCard 
+          title="学习天数" 
+          value={7} 
+          icon={BarChart3}
+          description="连续学习"
+        />
+      </div>
+      
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <ActionCard 
+          title="继续学习" 
+          icon={BookOpen} 
+          path="/"
+        />
+        <ActionCard 
+          title="我的收藏" 
+          icon={BookMarked} 
+          path="/favorites"
+        />
+        <ActionCard 
+          title="我的错题" 
+          icon={AlertTriangle} 
+          path="/mistakes"
+        />
+      </div>
+    </div>
+  );
+};
+
+export default DashboardSection;
