@@ -4,7 +4,6 @@ import ProgressBar from '@/components/ui/ProgressBar';
 import { cn } from '@/lib/utils';
 import { getDailyGoal, getEstimatedVocabulary } from '@/constants/mockData';
 import { useEffect, useState } from 'react';
-
 interface StatCardProps {
   title: string;
   value: string | number;
@@ -12,7 +11,6 @@ interface StatCardProps {
   description?: string;
   className?: string;
 }
-
 const StatCard = ({
   title,
   value,
@@ -31,7 +29,6 @@ const StatCard = ({
       </div>
     </div>
   </div>;
-
 interface ActionCardProps {
   title: string;
   icon: React.ElementType;
@@ -39,7 +36,6 @@ interface ActionCardProps {
   className?: string;
   onClick?: () => void;
 }
-
 const ActionCard = ({
   title,
   icon: Icon,
@@ -62,11 +58,9 @@ const ActionCard = ({
       </div>
     </Link>;
 };
-
 interface DashboardSectionProps {
   onSwitchToStudy: () => void;
 }
-
 const DashboardSection = ({
   onSwitchToStudy
 }: DashboardSectionProps) => {
@@ -77,23 +71,26 @@ const DashboardSection = ({
   const [mistakes, setMistakes] = useState<string[]>([]);
   const [learningDays, setLearningDays] = useState(7);
 
+  // Load data from localStorage on component mount
   useEffect(() => {
+    // Get correct count from localStorage
     const correctCount = localStorage.getItem('wordflow_correct_count');
     if (correctCount) {
       setStudiedToday(parseInt(correctCount));
     }
 
+    // Get favorites count
     const savedFavorites = localStorage.getItem('wordflow_favorites');
     if (savedFavorites) {
       setFavorites(JSON.parse(savedFavorites));
     }
 
+    // Get mistakes count
     const savedMistakes = localStorage.getItem('wordflow_mistakes');
     if (savedMistakes) {
       setMistakes(JSON.parse(savedMistakes));
     }
   }, []);
-
   return <div className="max-w-5xl mx-auto">
       <div className="glass-card p-8 mb-8 rounded-md">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6">
@@ -129,5 +126,4 @@ const DashboardSection = ({
       </div>
     </div>;
 };
-
 export default DashboardSection;
