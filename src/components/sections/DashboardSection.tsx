@@ -32,22 +32,44 @@ const StatCard = ({
     </div>
   </div>;
 
-const ActionCard = ({
-  title,
-  icon: Icon,
-  path,
-  className
-}: {
+interface ActionCardProps {
   title: string;
   icon: React.ElementType;
   path: string;
   className?: string;
-}) => <Link to={path} className={cn("glass-card p-6 rounded-xl transition-medium hover-scale", className)}>
-    <div className="flex items-center justify-between">
-      <p className="font-medium">{title}</p>
-      <Icon className="h-5 w-5 text-primary" />
-    </div>
-  </Link>;
+  onClick?: () => void;
+}
+
+const ActionCard = ({
+  title,
+  icon: Icon,
+  path,
+  className,
+  onClick
+}: ActionCardProps) => {
+  if (onClick) {
+    return (
+      <button 
+        onClick={onClick} 
+        className={cn("glass-card p-6 rounded-xl transition-medium hover-scale w-full text-left", className)}
+      >
+        <div className="flex items-center justify-between">
+          <p className="font-medium">{title}</p>
+          <Icon className="h-5 w-5 text-primary" />
+        </div>
+      </button>
+    );
+  }
+  
+  return (
+    <Link to={path} className={cn("glass-card p-6 rounded-xl transition-medium hover-scale", className)}>
+      <div className="flex items-center justify-between">
+        <p className="font-medium">{title}</p>
+        <Icon className="h-5 w-5 text-primary" />
+      </div>
+    </Link>
+  );
+};
 
 interface DashboardSectionProps {
   onSwitchToStudy: () => void;

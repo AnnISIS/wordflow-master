@@ -14,6 +14,7 @@ type StudyState = {
   mistakes: string[];
   quizType: QuizType;
   maskedWord?: string;
+  currentQuizType?: QuizType;
 };
 
 export const useWordStudy = () => {
