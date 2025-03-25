@@ -38,7 +38,7 @@ const Mistakes = () => {
   };
   
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-white">
       <Header />
       
       <main className="flex-grow pt-24 pb-20 md:pb-6 px-4 md:px-8">
@@ -59,7 +59,7 @@ const Mistakes = () => {
               placeholder="搜索单词或释义..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-3 w-full rounded-lg border border-border bg-background focus:border-primary focus:ring-1 focus:ring-primary transition-medium"
+              className="pl-10 pr-4 py-3 w-full rounded-md border border-border bg-white focus:border-black focus:ring-1 focus:ring-black transition-medium"
             />
           </div>
           
@@ -73,7 +73,7 @@ const Mistakes = () => {
               {mistakes.length === 0 && (
                 <Link 
                   to="/"
-                  className="mt-4 inline-block px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors"
+                  className="mt-4 inline-block px-6 py-2 bg-black text-white rounded-md font-medium hover:bg-black/90 transition-colors"
                 >
                   去学习
                 </Link>
@@ -84,7 +84,7 @@ const Mistakes = () => {
               {filteredWords.map(word => (
                 <div 
                   key={word.id}
-                  className="glass-card p-6 rounded-xl transition-medium hover:shadow-md border-l-4 border-red-400"
+                  className="bg-white p-6 rounded-xl shadow-sm transition-medium hover:shadow-md border border-border"
                 >
                   <div className="flex justify-between">
                     <div>
@@ -107,7 +107,7 @@ const Mistakes = () => {
                   </div>
                   
                   <div className="mt-4 text-sm text-muted-foreground">
-                    <span className="inline-block px-2 py-0.5 bg-red-100 text-red-800 rounded mr-2">
+                    <span className="inline-block px-2 py-0.5 bg-gray-100 text-gray-800 rounded-full mr-2">
                       需要复习
                     </span>
                   </div>
@@ -119,7 +119,7 @@ const Mistakes = () => {
           {filteredWords.length > 0 && (
             <div className="mt-6 flex justify-center">
               <button 
-                className="px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors"
+                className="px-6 py-2 bg-black text-white rounded-md font-medium hover:bg-black/90 transition-colors"
                 onClick={() => {
                   // This is where we changed to practice mistakes directly in this page
                   // instead of navigating to the home page with the mistakes mode

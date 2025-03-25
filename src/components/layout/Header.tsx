@@ -16,11 +16,11 @@ const Header = () => {
   
   return (
     <header className="fixed top-0 left-0 right-0 z-50">
-      <div className="neo-blur py-4 px-6 md:px-8">
+      <div className="bg-white border-b border-border py-4 px-6">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold text-black">
                 WordFlow
               </h1>
             </Link>
@@ -32,10 +32,10 @@ const Header = () => {
                 key={item.path}
                 to={item.path}
                 className={cn(
-                  "flex items-center px-4 py-2 rounded-lg transition-medium font-medium",
+                  "flex items-center px-4 py-2 rounded-md transition-medium font-medium",
                   location.pathname === item.path
-                    ? "bg-primary text-white"
-                    : "hover:bg-secondary text-foreground/90 hover:text-primary"
+                    ? "bg-black text-white"
+                    : "text-foreground/80 hover:bg-secondary"
                 )}
               >
                 <item.icon className="mr-2 h-4 w-4" />
@@ -51,17 +51,17 @@ const Header = () => {
       </div>
       
       {/* Mobile navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background/90 backdrop-blur-md border-t border-border shadow-lg z-50">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-border shadow-md z-50">
         <div className="flex justify-around py-2">
           {navItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
               className={cn(
-                "flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-medium",
+                "flex flex-col items-center justify-center py-2 px-3 rounded-md transition-medium",
                 location.pathname === item.path
-                  ? "text-primary"
-                  : "text-foreground/60 hover:text-primary"
+                  ? "text-black font-semibold"
+                  : "text-foreground/60 hover:text-black"
               )}
             >
               <item.icon className="h-5 w-5" />

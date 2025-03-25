@@ -67,9 +67,9 @@ const StudySection = ({ mode = 'normal' }: StudySectionProps) => {
                 key={type.id}
                 onClick={() => changeQuizType(type.id)}
                 className={cn(
-                  "px-3 py-1.5 text-sm rounded-full transition-medium",
+                  "px-3 py-1.5 text-sm rounded-md transition-medium",
                   quizType === type.id
-                    ? "bg-primary text-white"
+                    ? "bg-black text-white"
                     : "bg-secondary text-foreground hover:bg-secondary/70"
                 )}
               >
@@ -114,8 +114,8 @@ const StudySection = ({ mode = 'normal' }: StudySectionProps) => {
           />
           
           <div className="mt-6 flex justify-center">
-            <div className="bg-muted/50 p-3 rounded-lg inline-flex items-center">
-              <div className="flex space-x-4">
+            <div className="bg-secondary/50 p-4 rounded-md inline-flex items-center">
+              <div className="flex space-x-8">
                 <div className="text-center">
                   <p className="text-sm text-muted-foreground">已学</p>
                   <p className="text-2xl font-bold text-foreground">{answeredCount}</p>
@@ -126,7 +126,7 @@ const StudySection = ({ mode = 'normal' }: StudySectionProps) => {
                 </div>
                 <div className="text-center">
                   <p className="text-sm text-muted-foreground">准确率</p>
-                  <p className="text-2xl font-bold text-primary">
+                  <p className="text-2xl font-bold text-black">
                     {answeredCount > 0 ? Math.round((correctCount / answeredCount) * 100) : 0}%
                   </p>
                 </div>

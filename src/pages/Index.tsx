@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -26,19 +27,19 @@ const Index = () => {
   };
   
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-white">
       <Header />
       
       <main className="flex-grow pt-24 pb-20 md:pb-6 px-4 md:px-8">
         <div className="container mx-auto">
           <div className="flex justify-center mb-8">
-            <div className="inline-flex items-center p-1 bg-secondary rounded-lg">
+            <div className="inline-flex items-center p-1 bg-secondary rounded-md">
               <button 
                 onClick={() => setActiveTab('dashboard')}
                 className={cn(
                   "px-6 py-2 rounded-md text-sm font-medium transition-medium",
                   activeTab === 'dashboard' 
-                    ? "bg-white text-primary shadow-sm" 
+                    ? "bg-black text-white" 
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
@@ -49,7 +50,7 @@ const Index = () => {
                 className={cn(
                   "px-6 py-2 rounded-md text-sm font-medium transition-medium",
                   activeTab === 'study' 
-                    ? "bg-white text-primary shadow-sm" 
+                    ? "bg-black text-white" 
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
