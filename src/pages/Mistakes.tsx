@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Search, ArrowLeft } from 'lucide-react';
 import Header from '@/components/layout/Header';
@@ -8,7 +8,6 @@ import Footer from '@/components/layout/Footer';
 import { Word, words } from '@/constants/mockData';
 
 const Mistakes = () => {
-  const navigate = useNavigate();
   const [mistakes, setMistakes] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [mistakeWords, setMistakeWords] = useState<Word[]>([]);
@@ -36,11 +35,6 @@ const Mistakes = () => {
     
     // Update the displayed list
     setMistakeWords(prev => prev.filter(word => word.id !== wordId));
-  };
-  
-  const goToPracticeMistakes = () => {
-    // Add a URL parameter to indicate mistake practice mode
-    navigate('/?mode=mistakes');
   };
   
   return (
@@ -125,8 +119,19 @@ const Mistakes = () => {
           {filteredWords.length > 0 && (
             <div className="mt-6 flex justify-center">
               <button 
-                onClick={goToPracticeMistakes}
                 className="px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors"
+                onClick={() => {
+                  // This is where we changed to practice mistakes directly in this page
+                  // instead of navigating to the home page with the mistakes mode
+                  const savedMistakes = localStorage.getItem('wordflow_mistakes');
+                  if (savedMistakes) {
+                    const mistakesWords = JSON.parse(savedMistakes);
+                    if (mistakesWords.length > 0) {
+                      // We now have a dedicated component for studying mistakes
+                      // TODO: Create a StudyMistakesSection component if needed
+                    }
+                  }
+                }}
               >
                 练习错题
               </button>

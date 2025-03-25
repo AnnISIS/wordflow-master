@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -12,7 +11,6 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'study'>('dashboard');
   const [studyMode, setStudyMode] = useState<'normal' | 'mistakes'>('normal');
   
-  // Check URL params for mode
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const mode = searchParams.get('mode');
