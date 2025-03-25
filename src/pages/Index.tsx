@@ -6,10 +6,11 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import DashboardSection from '@/components/sections/DashboardSection';
 import StudySection from '@/components/sections/StudySection';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Index = () => {
   const location = useLocation();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'study'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'study' | 'mistakes'>('dashboard');
   const [studyMode, setStudyMode] = useState<'normal' | 'mistakes'>('normal');
   
   // Check URL params for mode
@@ -19,7 +20,7 @@ const Index = () => {
     
     if (mode === 'mistakes') {
       setStudyMode('mistakes');
-      setActiveTab('study');
+      setActiveTab('mistakes');
     }
   }, [location]);
   
@@ -34,38 +35,29 @@ const Index = () => {
       <main className="flex-grow pt-24 pb-20 md:pb-6 px-4 md:px-8">
         <div className="container mx-auto">
           <div className="flex justify-center mb-8">
-            <div className="inline-flex items-center p-1 bg-secondary rounded-lg">
-              <button 
-                onClick={() => setActiveTab('dashboard')}
-                className={cn(
-                  "px-6 py-2 rounded-md text-sm font-medium transition-medium",
-                  activeTab === 'dashboard' 
-                    ? "bg-white text-primary shadow-sm" 
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                概览
-              </button>
-              <button 
-                onClick={() => setActiveTab('study')}
-                className={cn(
-                  "px-6 py-2 rounded-md text-sm font-medium transition-medium",
-                  activeTab === 'study' 
-                    ? "bg-white text-primary shadow-sm" 
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                {studyMode === 'mistakes' ? '错题练习' : '学习'}
-              </button>
-            </div>
-          </div>
-          
-          <div className="animate-fade-in">
-            {activeTab === 'dashboard' ? (
-              <DashboardSection onSwitchToStudy={switchToStudy} />
-            ) : (
-              <StudySection mode={studyMode} />
-            )}
+            <Tabs 
+              value={activeTab} 
+              onValueChange={(value) => setActiveTab(value as 'dashboard' | 'study' | 'mistakes')}
+              className="w-full max-w-md"
+            >
+              <TabsList className="grid grid-cols-3 w-full">
+                <TabsTrigger value="dashboard">概览</TabsTrigger>
+                <TabsTrigger value="study">学习</TabsTrigger>
+                <TabsTrigger value="mistakes">错题练习</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="dashboard" className="animate-fade-in">
+                <DashboardSection onSwitchToStudy={switchToStudy} />
+              </TabsContent>
+              
+              <TabsContent value="study" className="animate-fade-in">
+                <StudySection mode="normal" />
+              </TabsContent>
+              
+              <TabsContent value="mistakes" className="animate-fade-in">
+                <StudySection mode="mistakes" />
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </main>
