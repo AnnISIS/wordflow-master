@@ -1,13 +1,17 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useWordStudy } from '@/hooks/useWordStudy';
 import WordCard from '@/components/cards/WordCard';
 import QuizCard from '@/components/cards/QuizCard';
 import ProgressBar from '@/components/ui/ProgressBar';
-import { quizTypes } from '@/constants/mockData';
+import { quizTypes, getDailyGoal } from '@/constants/mockData';
 import { cn } from '@/lib/utils';
 
-const StudySection = () => {
+interface StudySectionProps {
+  mode?: 'normal' | 'mistakes';
+}
+
+const StudySection = ({ mode = 'normal' }: StudySectionProps) => {
   const {
     currentWord,
     isFlipped,
@@ -19,13 +23,27 @@ const StudySection = () => {
     quizType,
     maskedWord,
     currentQuizType,
+    studyMode,
     flipCard,
     loadNextWord,
     selectOption,
     toggleFavorite,
     changeQuizType,
-    isFavorite
-  } = useWordStudy();
+    isFavorite,
+    setStudyMode
+  } = useWordStudy(mode);
+  
+  const [dailyGoal, setDailyGoal] = useState(20);
+  
+  useEffect(() => {
+    // Set daily goal
+    setDailyGoal(getDailyGoal());
+    
+    // Set study mode when component mounts
+    if (mode !== studyMode) {
+      setStudyMode(mode);
+    }
+  }, [mode, studyMode, setStudyMode]);
   
   if (!currentWord) {
     return (
@@ -39,7 +57,9 @@ const StudySection = () => {
     <div className="max-w-4xl mx-auto">
       <div className="mb-8">
         <div className="flex flex-wrap justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">单词学习</h2>
+          <h2 className="text-2xl font-bold">
+            {mode === 'mistakes' ? '错题练习' : '单词学习'}
+          </h2>
           
           <div className="flex space-x-2 mt-4 sm:mt-0">
             {quizTypes.map((type) => (
@@ -61,7 +81,7 @@ const StudySection = () => {
         
         <ProgressBar 
           value={correctCount} 
-          max={20} 
+          max={dailyGoal} 
           label="今日学习进度" 
           showValue={true} 
           size="md" 

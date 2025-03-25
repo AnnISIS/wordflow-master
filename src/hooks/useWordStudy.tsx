@@ -15,9 +15,10 @@ type StudyState = {
   quizType: QuizType;
   maskedWord?: string;
   currentQuizType?: QuizType;
+  studyMode: 'normal' | 'mistakes';
 };
 
-export const useWordStudy = () => {
+export const useWordStudy = (initialMode: 'normal' | 'mistakes' = 'normal') => {
   const [studyState, setStudyState] = useState<StudyState>({
     currentWord: null,
     isFlipped: false,
@@ -28,22 +29,33 @@ export const useWordStudy = () => {
     correctCount: 0,
     favorites: [],
     mistakes: [],
-    quizType: 'definition'
+    quizType: 'definition',
+    studyMode: initialMode
   });
 
   // Load saved data from localStorage
   useEffect(() => {
     const savedFavorites = localStorage.getItem('wordflow_favorites');
     const savedMistakes = localStorage.getItem('wordflow_mistakes');
+    const correctCount = localStorage.getItem('wordflow_correct_count');
+    const answeredCount = localStorage.getItem('wordflow_answered_count');
     
     setStudyState(prev => ({
       ...prev,
       favorites: savedFavorites ? JSON.parse(savedFavorites) : [],
-      mistakes: savedMistakes ? JSON.parse(savedMistakes) : []
+      mistakes: savedMistakes ? JSON.parse(savedMistakes) : [],
+      correctCount: correctCount ? parseInt(correctCount) : 0,
+      answeredCount: answeredCount ? parseInt(answeredCount) : 0
     }));
     
     loadNextWord();
   }, []);
+
+  // Save counts to localStorage when they change
+  useEffect(() => {
+    localStorage.setItem('wordflow_correct_count', studyState.correctCount.toString());
+    localStorage.setItem('wordflow_answered_count', studyState.answeredCount.toString());
+  }, [studyState.correctCount, studyState.answeredCount]);
 
   // Save favorites and mistakes to localStorage when they change
   useEffect(() => {
@@ -56,8 +68,17 @@ export const useWordStudy = () => {
   }, [studyState.favorites, studyState.mistakes]);
 
   const loadNextWord = useCallback(() => {
-    // Get a random word that hasn't been studied in the current session
-    const newWord = getRandomWord([]);
+    // Get a word based on study mode
+    let newWord;
+    
+    if (studyState.studyMode === 'mistakes' && studyState.mistakes.length > 0) {
+      // Get a random mistake word
+      const mistakeIds = studyState.mistakes;
+      newWord = getRandomWord(mistakeIds);
+    } else {
+      // Get a random word that hasn't been studied in the current session
+      newWord = getRandomWord([]);
+    }
     
     // Generate quiz options based on the quiz type
     const options = generateQuizOptions(newWord, studyState.quizType === 'mixed' 
@@ -81,7 +102,7 @@ export const useWordStudy = () => {
       maskedWord,
       currentQuizType: options.quizType || prev.quizType
     }));
-  }, [studyState.quizType]);
+  }, [studyState.quizType, studyState.studyMode, studyState.mistakes]);
 
   const getRandomQuizType = (): QuizType => {
     const types: QuizType[] = ['definition', 'sentence', 'completion'];
@@ -114,9 +135,18 @@ export const useWordStudy = () => {
     
     // Update state
     setStudyState(prev => {
-      const newMistakes = !isCorrect && prev.currentWord 
-        ? [...prev.mistakes, prev.currentWord.id]
-        : prev.mistakes;
+      // Handle mistake management
+      let newMistakes = [...prev.mistakes];
+      
+      if (!isCorrect && prev.currentWord) {
+        // If incorrect and not already in mistakes, add to mistakes
+        if (!prev.mistakes.includes(prev.currentWord.id)) {
+          newMistakes.push(prev.currentWord.id);
+        }
+      } else if (isCorrect && prev.currentWord && prev.studyMode === 'mistakes') {
+        // If correct and in mistake mode, remove from mistakes
+        newMistakes = newMistakes.filter(id => id !== prev.currentWord?.id);
+      }
       
       return {
         ...prev,
@@ -169,6 +199,29 @@ export const useWordStudy = () => {
   const isMistake = useCallback((wordId: string) => {
     return studyState.mistakes.includes(wordId);
   }, [studyState.mistakes]);
+  
+  const setStudyMode = useCallback((mode: 'normal' | 'mistakes') => {
+    setStudyState(prev => ({
+      ...prev,
+      studyMode: mode
+    }));
+    
+    // Load a new word appropriate for the mode
+    setTimeout(() => {
+      loadNextWord();
+    }, 100);
+  }, [loadNextWord]);
+
+  const resetTodayCounts = useCallback(() => {
+    setStudyState(prev => ({
+      ...prev,
+      answeredCount: 0,
+      correctCount: 0
+    }));
+    
+    localStorage.setItem('wordflow_correct_count', '0');
+    localStorage.setItem('wordflow_answered_count', '0');
+  }, []);
 
   return {
     ...studyState,
@@ -179,6 +232,8 @@ export const useWordStudy = () => {
     toggleFavorite,
     changeQuizType,
     isFavorite,
-    isMistake
+    isMistake,
+    setStudyMode,
+    resetTodayCounts
   };
 };

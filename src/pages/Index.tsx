@@ -1,5 +1,6 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -7,7 +8,20 @@ import DashboardSection from '@/components/sections/DashboardSection';
 import StudySection from '@/components/sections/StudySection';
 
 const Index = () => {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState<'dashboard' | 'study'>('dashboard');
+  const [studyMode, setStudyMode] = useState<'normal' | 'mistakes'>('normal');
+  
+  // Check URL params for mode
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const mode = searchParams.get('mode');
+    
+    if (mode === 'mistakes') {
+      setStudyMode('mistakes');
+      setActiveTab('study');
+    }
+  }, [location]);
   
   const switchToStudy = () => {
     setActiveTab('study');
@@ -41,7 +55,7 @@ const Index = () => {
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                学习
+                {studyMode === 'mistakes' ? '错题练习' : '学习'}
               </button>
             </div>
           </div>
@@ -50,7 +64,7 @@ const Index = () => {
             {activeTab === 'dashboard' ? (
               <DashboardSection onSwitchToStudy={switchToStudy} />
             ) : (
-              <StudySection />
+              <StudySection mode={studyMode} />
             )}
           </div>
         </div>

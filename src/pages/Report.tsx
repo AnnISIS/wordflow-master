@@ -1,4 +1,5 @@
 
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, TrendingUp, Check, Award } from 'lucide-react';
 import Header from '@/components/layout/Header';
@@ -6,20 +7,64 @@ import Footer from '@/components/layout/Footer';
 import ProgressBar from '@/components/ui/ProgressBar';
 
 const Report = () => {
-  // Mock data for the report
-  const weeklyData = [
-    { day: '周一', learned: 18, correct: 15 },
-    { day: '周二', learned: 22, correct: 20 },
-    { day: '周三', learned: 15, correct: 12 },
-    { day: '周四', learned: 25, correct: 22 },
-    { day: '周五', learned: 20, correct: 18 },
-    { day: '周六', learned: 10, correct: 8 },
-    { day: '周日', learned: 30, correct: 28 }
-  ];
+  // State for report data
+  const [weeklyData, setWeeklyData] = useState([
+    { day: '周一', learned: 0, correct: 0 },
+    { day: '周二', learned: 0, correct: 0 },
+    { day: '周三', learned: 0, correct: 0 },
+    { day: '周四', learned: 0, correct: 0 },
+    { day: '周五', learned: 0, correct: 0 },
+    { day: '周六', learned: 0, correct: 0 },
+    { day: '周日', learned: 0, correct: 0 }
+  ]);
   
-  const totalLearned = weeklyData.reduce((sum, day) => sum + day.learned, 0);
-  const totalCorrect = weeklyData.reduce((sum, day) => sum + day.correct, 0);
-  const accuracy = Math.round((totalCorrect / totalLearned) * 100);
+  const [totalLearned, setTotalLearned] = useState(0);
+  const [totalCorrect, setTotalCorrect] = useState(0);
+  const [accuracy, setAccuracy] = useState(0);
+  
+  useEffect(() => {
+    // In a real app, this would be fetched from a backend
+    // For now, we'll use localStorage and mock data
+    const answeredCount = localStorage.getItem('wordflow_answered_count');
+    const correctCount = localStorage.getItem('wordflow_correct_count');
+    
+    // Update today's data (last day in the array)
+    const today = new Date().getDay(); // 0 = Sunday, 1 = Monday, ...
+    const todayIndex = today === 0 ? 6 : today - 1; // Adjust to 0-6 where 0 is Monday
+    
+    // Create a copy of the weekly data
+    const newWeeklyData = [...weeklyData];
+    
+    // Update today's data
+    newWeeklyData[todayIndex] = {
+      ...newWeeklyData[todayIndex],
+      learned: answeredCount ? parseInt(answeredCount) : 18,
+      correct: correctCount ? parseInt(correctCount) : 15
+    };
+    
+    // Generate some random data for other days
+    for (let i = 0; i < newWeeklyData.length; i++) {
+      if (i !== todayIndex) {
+        const learned = Math.floor(Math.random() * 20) + 10; // Random between 10-30
+        const correct = Math.floor(learned * (0.7 + Math.random() * 0.25)); // Random 70-95% correct
+        newWeeklyData[i] = {
+          ...newWeeklyData[i],
+          learned,
+          correct
+        };
+      }
+    }
+    
+    setWeeklyData(newWeeklyData);
+    
+    // Calculate totals
+    const total = newWeeklyData.reduce((sum, day) => sum + day.learned, 0);
+    const correct = newWeeklyData.reduce((sum, day) => sum + day.correct, 0);
+    
+    setTotalLearned(total);
+    setTotalCorrect(correct);
+    setAccuracy(Math.round((correct / total) * 100));
+  }, []);
   
   return (
     <div className="min-h-screen flex flex-col bg-background">

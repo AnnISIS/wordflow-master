@@ -35,7 +35,9 @@ const QuizCard = ({
       case 'sentence':
         return `选择包含 "${word.word}" 的正确例句：`;
       case 'completion':
-        return `完成单词 "${maskedWord}"：`;
+        return maskedWord 
+          ? `根据释义补全单词 "${maskedWord}"：` 
+          : `完成单词 "${maskedWord}"：`;
       default:
         return '选择正确答案：';
     }
@@ -63,9 +65,15 @@ const QuizCard = ({
            activeQuizType === 'completion' ? '单词补全' : '混合题型'}
         </h3>
         
-        <p className="text-lg font-medium text-foreground mb-4">
+        <p className="text-lg font-medium text-foreground mb-2">
           {getQuizPrompt()}
         </p>
+        
+        {activeQuizType === 'completion' && (
+          <p className="text-md text-muted-foreground mb-4">
+            {word.translations[0].meaning}
+          </p>
+        )}
         
         {isCorrect !== null && (
           <div className={cn(

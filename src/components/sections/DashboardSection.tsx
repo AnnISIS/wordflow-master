@@ -4,6 +4,7 @@ import { BookOpen, BookMarked, AlertTriangle, BarChart3 } from 'lucide-react';
 import ProgressBar from '@/components/ui/ProgressBar';
 import { cn } from '@/lib/utils';
 import { getDailyGoal, getEstimatedVocabulary } from '@/constants/mockData';
+import { useEffect, useState } from 'react';
 
 interface StatCardProps {
   title: string;
@@ -78,7 +79,31 @@ interface DashboardSectionProps {
 const DashboardSection = ({ onSwitchToStudy }: DashboardSectionProps) => {
   const dailyGoal = getDailyGoal();
   const vocabularySize = getEstimatedVocabulary();
-  const studiedToday = 12; // This would come from actual tracking
+  const [studiedToday, setStudiedToday] = useState(0);
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [mistakes, setMistakes] = useState<string[]>([]);
+  const [learningDays, setLearningDays] = useState(7);
+  
+  // Load data from localStorage on component mount
+  useEffect(() => {
+    // Get correct count from localStorage
+    const correctCount = localStorage.getItem('wordflow_correct_count');
+    if (correctCount) {
+      setStudiedToday(parseInt(correctCount));
+    }
+    
+    // Get favorites count
+    const savedFavorites = localStorage.getItem('wordflow_favorites');
+    if (savedFavorites) {
+      setFavorites(JSON.parse(savedFavorites));
+    }
+    
+    // Get mistakes count
+    const savedMistakes = localStorage.getItem('wordflow_mistakes');
+    if (savedMistakes) {
+      setMistakes(JSON.parse(savedMistakes));
+    }
+  }, []);
 
   return <div className="max-w-5xl mx-auto">
       <div className="glass-card p-8 rounded-xl mb-8">
@@ -106,9 +131,9 @@ const DashboardSection = ({ onSwitchToStudy }: DashboardSectionProps) => {
       
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
         <StatCard title="词汇量" value={vocabularySize} icon={BookOpen} description="估计词汇量" />
-        <StatCard title="已收藏" value={15} icon={BookMarked} description="收藏单词数" />
-        <StatCard title="待复习" value={8} icon={AlertTriangle} description="错题数量" />
-        <StatCard title="学习天数" value={7} icon={BarChart3} description="连续学习" />
+        <StatCard title="已收藏" value={favorites.length} icon={BookMarked} description="收藏单词数" />
+        <StatCard title="待复习" value={mistakes.length} icon={AlertTriangle} description="错题数量" />
+        <StatCard title="学习天数" value={learningDays} icon={BarChart3} description="连续学习" />
       </div>
       
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

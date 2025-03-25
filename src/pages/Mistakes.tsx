@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Search, ArrowLeft } from 'lucide-react';
 import Header from '@/components/layout/Header';
@@ -8,6 +8,7 @@ import Footer from '@/components/layout/Footer';
 import { Word, words } from '@/constants/mockData';
 
 const Mistakes = () => {
+  const navigate = useNavigate();
   const [mistakes, setMistakes] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [mistakeWords, setMistakeWords] = useState<Word[]>([]);
@@ -35,6 +36,11 @@ const Mistakes = () => {
     
     // Update the displayed list
     setMistakeWords(prev => prev.filter(word => word.id !== wordId));
+  };
+  
+  const goToPracticeMistakes = () => {
+    // Add a URL parameter to indicate mistake practice mode
+    navigate('/?mode=mistakes');
   };
   
   return (
@@ -118,12 +124,12 @@ const Mistakes = () => {
           
           {filteredWords.length > 0 && (
             <div className="mt-6 flex justify-center">
-              <Link 
-                to="/"
+              <button 
+                onClick={goToPracticeMistakes}
                 className="px-6 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors"
               >
                 练习错题
-              </Link>
+              </button>
             </div>
           )}
         </div>
