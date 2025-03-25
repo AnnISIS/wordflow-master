@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Volume2, Heart, Bookmark, BookmarkCheck, RotateCw } from 'lucide-react';
+import { Volume2, Star, Bookmark, BookmarkCheck, RotateCw } from 'lucide-react';
 import { Word } from '@/constants/mockData';
 
 interface WordCardProps {
@@ -82,12 +82,9 @@ const WordCard = ({
                 "p-2 rounded-full transition-colors",
                 isFavorite ? "bg-primary/10 text-primary" : "hover:bg-secondary text-muted-foreground"
               )}
+              aria-label={isFavorite ? "从收藏中移除" : "添加到收藏"}
             >
-              {isFavorite ? (
-                <BookmarkCheck className="h-5 w-5" />
-              ) : (
-                <Bookmark className="h-5 w-5" />
-              )}
+              <Star className={cn("h-5 w-5", isFavorite && "fill-primary")} />
             </button>
             
             <button 
@@ -96,6 +93,7 @@ const WordCard = ({
                 onNext();
               }}
               className="p-2 rounded-full hover:bg-secondary text-muted-foreground transition-colors"
+              aria-label="下一个单词"
             >
               <RotateCw className="h-5 w-5" />
             </button>

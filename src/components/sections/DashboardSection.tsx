@@ -1,8 +1,10 @@
+
 import { Link } from 'react-router-dom';
 import { BookOpen, BookMarked, AlertTriangle, BarChart3 } from 'lucide-react';
 import ProgressBar from '@/components/ui/ProgressBar';
 import { cn } from '@/lib/utils';
 import { getDailyGoal, getEstimatedVocabulary } from '@/constants/mockData';
+
 interface StatCardProps {
   title: string;
   value: string | number;
@@ -10,6 +12,7 @@ interface StatCardProps {
   description?: string;
   className?: string;
 }
+
 const StatCard = ({
   title,
   value,
@@ -28,6 +31,7 @@ const StatCard = ({
       </div>
     </div>
   </div>;
+
 const ActionCard = ({
   title,
   icon: Icon,
@@ -44,7 +48,12 @@ const ActionCard = ({
       <Icon className="h-5 w-5 text-primary" />
     </div>
   </Link>;
-const DashboardSection = () => {
+
+interface DashboardSectionProps {
+  onSwitchToStudy: () => void;
+}
+
+const DashboardSection = ({ onSwitchToStudy }: DashboardSectionProps) => {
   const dailyGoal = getDailyGoal();
   const vocabularySize = getEstimatedVocabulary();
   const studiedToday = 12; // This would come from actual tracking
@@ -56,7 +65,12 @@ const DashboardSection = () => {
             <h2 className="text-2xl font-bold mb-1">hello! 👋</h2>
             <p className="text-muted-foreground">今天继续学习新单词吧</p>
           </div>
-          <Link to="/" className="mt-4 sm:mt-0 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors mx-0 px-[24px] py-[9px]">进入学习</Link>
+          <button 
+            onClick={onSwitchToStudy}
+            className="mt-4 sm:mt-0 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors mx-0 px-[24px] py-[9px]"
+          >
+            进入学习
+          </button>
         </div>
         
         <div className="space-y-4">
@@ -76,10 +90,11 @@ const DashboardSection = () => {
       </div>
       
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <ActionCard title="继续学习" icon={BookOpen} path="/" />
+        <ActionCard title="继续学习" icon={BookOpen} path="/" onClick={onSwitchToStudy} />
         <ActionCard title="我的收藏" icon={BookMarked} path="/favorites" />
         <ActionCard title="我的错题" icon={AlertTriangle} path="/mistakes" />
       </div>
     </div>;
 };
+
 export default DashboardSection;

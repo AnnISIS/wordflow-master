@@ -9,6 +9,10 @@ import StudySection from '@/components/sections/StudySection';
 const Index = () => {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'study'>('dashboard');
   
+  const switchToStudy = () => {
+    setActiveTab('study');
+  };
+  
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
@@ -44,7 +48,7 @@ const Index = () => {
           
           <div className="animate-fade-in">
             {activeTab === 'dashboard' ? (
-              <DashboardSection />
+              <DashboardSection onSwitchToStudy={switchToStudy} />
             ) : (
               <StudySection />
             )}

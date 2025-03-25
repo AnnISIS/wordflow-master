@@ -59,24 +59,34 @@ export const useWordStudy = () => {
     const newWord = getRandomWord([]);
     
     // Generate quiz options based on the quiz type
-    const options = generateQuizOptions(newWord, [newWord], studyState.quizType);
+    const options = generateQuizOptions(newWord, studyState.quizType === 'mixed' 
+      ? getRandomQuizType() 
+      : studyState.quizType);
     
     // For completion quiz, the first element is the masked word
     let maskedWord;
-    if (studyState.quizType === 'completion') {
-      maskedWord = options.shift();
+    if (studyState.quizType === 'completion' || 
+        (studyState.quizType === 'mixed' && options.quizType === 'completion')) {
+      maskedWord = options.maskedWord;
     }
     
     setStudyState(prev => ({
       ...prev,
       currentWord: newWord,
       isFlipped: false,
-      quizOptions: options,
+      quizOptions: options.options,
       selectedOption: null,
       isCorrect: null,
-      maskedWord
+      maskedWord,
+      currentQuizType: options.quizType || prev.quizType
     }));
   }, [studyState.quizType]);
+
+  const getRandomQuizType = (): QuizType => {
+    const types: QuizType[] = ['definition', 'sentence', 'completion'];
+    const randomIndex = Math.floor(Math.random() * types.length);
+    return types[randomIndex];
+  };
 
   const flipCard = useCallback(() => {
     setStudyState(prev => ({
@@ -89,12 +99,15 @@ export const useWordStudy = () => {
     if (studyState.selectedOption) return; // Prevent multiple selections
     
     let isCorrect = false;
+    const currentQuizType = studyState.quizType === 'mixed' 
+      ? studyState.currentQuizType 
+      : studyState.quizType;
     
-    if (studyState.quizType === 'definition') {
+    if (currentQuizType === 'definition') {
       isCorrect = option === studyState.currentWord?.translations[0].meaning;
-    } else if (studyState.quizType === 'sentence') {
+    } else if (currentQuizType === 'sentence') {
       isCorrect = option === studyState.currentWord?.examples[0];
-    } else if (studyState.quizType === 'completion') {
+    } else if (currentQuizType === 'completion') {
       isCorrect = option === studyState.currentWord?.word;
     }
     
@@ -118,7 +131,7 @@ export const useWordStudy = () => {
     setTimeout(() => {
       loadNextWord();
     }, 1500);
-  }, [studyState.currentWord, studyState.quizType, loadNextWord]);
+  }, [studyState.currentWord, studyState.quizType, studyState.currentQuizType, loadNextWord]);
 
   const toggleFavorite = useCallback(() => {
     if (!studyState.currentWord) return;
@@ -158,6 +171,7 @@ export const useWordStudy = () => {
 
   return {
     ...studyState,
+    currentQuizType: studyState.quizType === 'mixed' ? studyState.currentQuizType : studyState.quizType,
     loadNextWord,
     flipCard,
     selectOption,

@@ -11,6 +11,7 @@ interface QuizCardProps {
   isCorrect: boolean | null;
   onSelectOption: (option: string) => void;
   maskedWord?: string;
+  currentQuizType?: QuizType;
 }
 
 const QuizCard = ({
@@ -20,11 +21,15 @@ const QuizCard = ({
   selectedOption,
   isCorrect,
   onSelectOption,
-  maskedWord
+  maskedWord,
+  currentQuizType
 }: QuizCardProps) => {
   
+  // Use currentQuizType if available (for mixed mode), otherwise use quizType
+  const activeQuizType = currentQuizType || quizType;
+  
   const getQuizPrompt = () => {
-    switch (quizType) {
+    switch (activeQuizType) {
       case 'definition':
         return `选择 "${word.word}" 的正确释义：`;
       case 'sentence':
@@ -37,7 +42,7 @@ const QuizCard = ({
   };
   
   const getCorrectAnswer = () => {
-    switch (quizType) {
+    switch (activeQuizType) {
       case 'definition':
         return word.translations[0].meaning;
       case 'sentence':
@@ -53,9 +58,9 @@ const QuizCard = ({
     <div className="glass-card p-6 rounded-2xl max-w-md mx-auto animate-scale-in">
       <div className="mb-6">
         <h3 className="text-sm font-medium text-muted-foreground mb-2">
-          {quizType === 'definition' ? '释义选择' : 
-           quizType === 'sentence' ? '例句选择' : 
-           quizType === 'completion' ? '单词补全' : '混合题型'}
+          {activeQuizType === 'definition' ? '释义选择' : 
+           activeQuizType === 'sentence' ? '例句选择' : 
+           activeQuizType === 'completion' ? '单词补全' : '混合题型'}
         </h3>
         
         <p className="text-lg font-medium text-foreground mb-4">

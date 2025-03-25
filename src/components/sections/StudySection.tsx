@@ -18,6 +18,7 @@ const StudySection = () => {
     correctCount,
     quizType,
     maskedWord,
+    currentQuizType,
     flipCard,
     loadNextWord,
     selectOption,
@@ -89,6 +90,7 @@ const StudySection = () => {
             isCorrect={isCorrect}
             onSelectOption={selectOption}
             maskedWord={maskedWord}
+            currentQuizType={currentQuizType}
           />
           
           <div className="mt-6 flex justify-center">

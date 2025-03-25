@@ -193,35 +193,51 @@ export const quizTypes: { id: QuizType; name: string }[] = [
   { id: 'mixed', name: '混合类型' }
 ];
 
-export const generateQuizOptions = (correctWord: Word, allWords: Word[], type: QuizType): string[] => {
+export const generateQuizOptions = (correctWord: Word, type: QuizType): { options: string[], quizType?: QuizType, maskedWord?: string } => {
+  const allWords = [...words]; // Get all words for generating distractors
   const otherWords = allWords.filter(w => w.id !== correctWord.id);
   const shuffled = [...otherWords].sort(() => 0.5 - Math.random()).slice(0, 3);
   
   let options: string[] = [];
+  let maskedWord: string | undefined;
+  let quizType = type;
   
-  if (type === 'definition') {
+  // If mixed type, randomly choose one of the quiz types
+  if (type === 'mixed') {
+    const types: QuizType[] = ['definition', 'sentence', 'completion'];
+    const randomIndex = Math.floor(Math.random() * types.length);
+    quizType = types[randomIndex];
+  }
+  
+  if (quizType === 'definition') {
     options = [
       correctWord.translations[0].meaning,
       ...shuffled.map(w => w.translations[0].meaning)
     ];
-  } else if (type === 'sentence') {
+  } else if (quizType === 'sentence') {
     options = [
       correctWord.examples[0],
       ...shuffled.map(w => w.examples[0])
     ];
-  } else if (type === 'completion') {
+  } else if (quizType === 'completion') {
     const wordToComplete = correctWord.word;
-    const maskedWord = wordToComplete.replace(/[a-zA-Z]/g, (match, index) => {
-      // Leave first and last letter visible, mask others with _
+    // Leave first and last letter visible, mask the middle part with underscores
+    maskedWord = wordToComplete.replace(/[a-zA-Z]/g, (match, index) => {
       return (index === 0 || index === wordToComplete.length - 1) ? match : '_';
     });
-    options = [wordToComplete, ...shuffled.map(w => w.word)];
-    // For completion, we need to return the masked word and options
-    return [maskedWord, ...options];
+    
+    options = [
+      correctWord.word,
+      ...shuffled.map(w => w.word)
+    ];
   }
   
   // Shuffle the options
-  return options.sort(() => 0.5 - Math.random());
+  return {
+    options: options.sort(() => 0.5 - Math.random()),
+    quizType: type === 'mixed' ? quizType : undefined,
+    maskedWord
+  };
 };
 
 export const getRandomWord = (excludeIds: string[] = []): Word => {
